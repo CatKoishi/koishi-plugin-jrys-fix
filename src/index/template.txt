@@ -63,8 +63,9 @@
         }
         .hitokoto p{
             margin: 0px 0 0;
-            color: #666;
-            font-size: 24px;
+            color: #838383;
+            font-size: 20px;
+            font-weight: bold; /* 将字体设置为粗体 */
             padding-left: 24px; /* 左内边距为24像素 */
             padding-right: 24px; /* 右内边距为24像素 */
         }
@@ -82,20 +83,24 @@
         }
         .content {
             padding: 0 20px;
+            
         }
         .content p {
             color: #838383;
-            margin: 10px 0 0;
+            margin: 15px 0 0;
             font-size: 20px;
+            
         }
         .status {
             margin-top: 0px;
             color: #838383;
+            
         }
         .status p {
             color: #838383;
             margin: 0px 0;
             font-size: 20px;
+            
         }
         .level-bar {
             margin-top: 10px;
@@ -130,7 +135,7 @@
         }
         .fortune {
             margin-top: 20px;
-            font-size: 28px;
+            font-size: 40px;
             font-weight: bold;
         }
         .stars {
@@ -171,8 +176,8 @@
         <div class="content">
             <p><strong>@##user## ##signinText##</strong></p>
             <div class="status">
-                <p>获得好感度:<strong>##todayExp##</strong></p>
-                <p>当前好感度:<strong>##totalExp##</strong></p>
+                <p><strong>获得好感度:##todayExp##</strong></p>
+                <p><strong>当前好感度:##totalExp##</strong></p>
             </div>
             <div class="level-info"><strong>Level ##level##</strong></div>
             <div class="level-bar">

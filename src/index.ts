@@ -76,7 +76,7 @@ async function fetchHitokoto(ctx: Context) {
       // ]
       // return hitokoto;
       // return (hitokotoText+`\n——`+fromText);
-      const hitokoto = `「${hitokotoText}<br>  ——${fromText}」`;
+      const hitokoto = `${hitokotoText}<br>  ——${fromText}`;
       return hitokoto;
   } catch (error) {
       console.error('An error occurred while fetching hitokoto:', error);
@@ -88,7 +88,7 @@ export function apply(ctx: Context, config: Config) {
   // write your plugin here
   const signin = new Signin(ctx, config);
 
-  ctx.command("jrysmax", "jrysmax")
+  ctx.command("jrysmax", "今日运势")
   // .alias("签到")
   // .option('text','-t 纯文本输出')
   .userFields(['name'])

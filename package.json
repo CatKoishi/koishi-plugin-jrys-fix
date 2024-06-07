@@ -8,11 +8,30 @@
     "lib",
     "dist"
   ],
+  "homepage": "https://github.com/axlmly/koishi-plugin-jrys-max",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axlmly/koishi-plugin-jrys-max"
+  },
+  "koishi": {
+    "browser": true,
+    "description": {
+      "en": "A sign-in plugin",
+      "zh": "又一个每日运势签到插件"
+    },
+    "service": {
+      "required": [
+        "puppeteer",
+        "database"
+      ]
+    }
+  },
   "license": "MIT",
   "keywords": [
     "chatbot",
     "koishi",
-    "plugin"
+    "plugin",
+    "sign in"
   ],
   "peerDependencies": {
     "koishi": "^4.17.8"
