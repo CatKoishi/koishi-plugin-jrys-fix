@@ -70,7 +70,7 @@ async function readFilenames(dirPath:string) {
 
 async function fetchHitokoto(ctx: Context) {
   try {
-      const response = await fetch('https://v1.hitokoto.cn/?c=a&c=c&c=b&c=k');
+      const response = await fetch('https://v1.hitokoto.cn/?c=a&c&b&k');
       const { hitokoto: hitokotoText ,from: fromText ,from_who: fromWhoText	} = await response.json();
       // const hitokoto = [
       //   `${hitokotoText}`,
@@ -194,64 +194,66 @@ export function apply(ctx: Context, config: Config) {
     if(level === 1){
       levelname = "群聊冒险者"
       color ="#838383"
-    }else if(LevelLines === 2){
+    }else if(level === 2){
       levelname = "群聊冒险家"
       color ="#838383"
-    }else if(LevelLines === 3){
+    }else if(level === 3){
       levelname = "开拓地冒险者"
       color ="#838383"
-    }else if(LevelLines === 4){
+    }else if(level === 4){
       levelname = "开拓地冒险家"
       color ="#000000"
-    }else if(LevelLines === 5){
+    }else if(level === 5){
       levelname = "火星开拓者"
       color ="#000000"
-    }else if(LevelLines === 6){
+    }else if(level === 6){
       levelname = "火星科技"
       color ="#42bc05"
-    }else if(LevelLines === 7){
+    }else if(level === 7){
       levelname = "言灵密语"
       color ="#42bc05"
-    }else if(LevelLines === 8){
+    }else if(level === 8){
       levelname = "低声呢喃"
       color ="#42bc05"
-    }else if(LevelLines === 9){
+    }else if(level === 9){
       levelname = "荒野的漫步者"
       color ="#2003da"
-    }else if(LevelLines === 10){
+    }else if(level === 10){
       levelname = "言灵探索者"
       color ="#2003da"
-    }else if(LevelLines === 11){
+    }else if(level === 11){
       levelname = "水系魔法师"
       color ="#2003da"
-    }else if(LevelLines === 12){
+    }else if(level === 12){
       levelname = "水系魔导士"
       color ="#03a4da"
-    }else if(LevelLines === 13){
+    }else if(level === 13){
       levelname = "绝望的呐喊"
       color ="#03a4da"
-    }else if(LevelLines === 14){
+    }else if(level === 14){
       levelname = "疯狂嘶吼"
       color ="#9d03da"
-    }else if(LevelLines === 15){
+    }else if(level === 15){
       levelname = "被缚的倒吊者"
       color ="#9d03da"
-    }else if(LevelLines === 16){
+    }else if(level === 16){
       levelname = "崩毁世界之人"
       color ="#9d03da"
-    }else if(LevelLines === 17){
+    }else if(level === 17){
       levelname = "命运眷顾者"
       color ="#f10171"
-    }else if(LevelLines === 18){
+    }else if(level === 18){
       levelname = "背弃之绝望"
       color ="#f10171"
-    }else if(LevelLines === 19){
+    }else if(level === 19){
       levelname = "誓约的守护者"
       color ="#c9b86d"
-    }else if(LevelLines === 20){
+    }else if(level === 20){
       levelname = "天选之人"
       color ="#ffd000"
     }
+    // return `${level}`
+    // return `${levelname}`
     const textfont = config.textfont.replace(/\\/g, '/');
     // return `${LevelLines}`
     const allpoint = getSigninJson.allpoint;

@@ -98,7 +98,7 @@
             margin-top: 0px;
             margin-bottom: 0px;
             font-size: 20px;
-            font-weight: 500
+            font-weight: 500;
         }
         .status {
             margin-top: 0px;
@@ -109,7 +109,7 @@
             color: #838383;
             margin-bottom: 10px;
             font-size: 20px;
-            font-weight: 500
+            font-weight: 500;
         }
         .level-bar {
             margin-top: 0px;
@@ -138,18 +138,28 @@
             font-size: 30px;
             white-space: nowrap;
             display: inline;
+            text-align: center;
+        }
+        .parent {
+            text-align: center;
         }
         .special-font {
             font-family: 'pixel';
             margin-top: 0px;
-            font-size: 25px;
+            font-size: 30px;
+            font-weight: bold;
             color: ##color##;
             display: inline
         }
-        .level-bar .pointlevel{
+        .pointlevel {
+            font-family: 'pixel';
             color: #b4b1b1;
-            font-size: 30px;
+            margin-right: 24px;
+            margin-left: auto;
+            font-size: 24px;
+            font-weight: bold;
             white-space: nowrap;
+            float: right;
         }
         .fortune {
             margin-top: 20px;
@@ -204,18 +214,13 @@
             <div class="status">
                 <p>获得好感度:##todayExp##<br>当前好感度:##totalExp##</p>
             </div>
-            <div class="level-info">Level 
-                
-                <span class="special-font">&#x2020;##level##&#x2020;</span>
-                
-            </div>
+            <div class="level-info">Level <span class="special-font">&#x2020;##level##&#x2020;</span></div>
             <div class="level-bar">
                 <div class="bar-container">
                     <div class="progress"></div>
-                    
                 </div>
-                <div class="pointlevel">##pointlevel##</div>
             </div>
+            <div class="pointlevel">##pointlevel##</div>
             <div class="fortune">运势值: ##jryslucky##<br><strong>##fortunate##</strong></div>
             <div class="stars">
                 <span>##luckystar##</span>
