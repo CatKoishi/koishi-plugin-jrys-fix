@@ -22,8 +22,8 @@ interface TimeGreeting {
 }
 
 const timeGreetings: TimeGreeting[] = [
-    { range: [ 0,  6], message: '凌晨好' },
-    { range: [ 6, 11], message: '上午好' },
+    { range: [ 0,  5], message: '晚安' },
+    { range: [ 5, 11], message: '上午好' },
     { range: [11, 14], message: '中午好' },
     { range: [14, 18], message: '下午好' },
     { range: [18, 20], message: '傍晚好' },
@@ -36,16 +36,26 @@ interface LevelInfo {
 }
 
 export const levelInfos: LevelInfo[] = [
-    { level: 1, level_line:  1000 },
-    { level: 2, level_line:  3000 },
-    { level: 3, level_line:  7000 },
-    { level: 4, level_line: 15000 },
-    { level: 5, level_line: 30000 },
-    { level: 6, level_line: 50000 },
-    { level: 7, level_line: 80000 },
-    { level: 8, level_line:170000 },
-    { level: 9, level_line:350000 },
-    { level:10, level_line:800000 },
+    { level: 1, level_line:      10000 },
+    { level: 2, level_line:      15000 },
+    { level: 3, level_line:      32000 },
+    { level: 4, level_line:      76000 },
+    { level: 5, level_line:     328000 },
+    { level: 6, level_line:     676000 },
+    { level: 7, level_line:    1372000 },
+    { level: 8, level_line:    2944000 },
+    { level: 9, level_line:    6088000 },
+    { level:10, level_line:   12376000 },
+    { level:11, level_line:   26752000 },
+    { level:12, level_line:   55504000 },
+    { level:13, level_line:  113008000 },
+    { level:14, level_line:  246016000 },
+    { level:15, level_line:  512032000 },
+    { level:16, level_line: 1044064000 },
+    { level:17, level_line: 2108128000 },
+    { level:18, level_line: 4416256000 },
+    { level:19, level_line: 9032512000 },
+    { level:20, level_line:18265024000 },
 ];
 
 export const inject = ['database']
@@ -91,11 +101,34 @@ export class Signin {
             return { "cmd":"get", "status": 1, "getpoint": signpoint, "signTime": signTime, "allpoint": signpoint, "count": 1 };
         }
         if (Number(time.slice(8,10)) - Number(signTime.slice(8,10))) {
-            await this.ctx.database.upsert('jrys_max', [{ id: (String(session.userId)), name: name, time: signTime, point: Number(all_point+signpoint), count: count+1, current_point: Number(signpoint) }]);
-            // logger.info(`${name}(${session.userId}) 签到成功！`)
-            return { "cmd":"get", "status": 1, "getpoint": signpoint, "signTime": signTime, "allpoint": all_point+signpoint, "count": count+1 };
+            // 如果日期不同（即今天还没有签到）
+            await this.ctx.database.upsert('jrys_max', [{ 
+                id: String(session.userId), 
+                name: name, 
+                time: signTime, 
+                point: Number(all_point + signpoint), 
+                count: count + 1, 
+                current_point: Number(signpoint) 
+            }]);
+            // 记录签到成功的信息
+            return { 
+                "cmd": "get", 
+                "status": 1, // 签到成功
+                "getpoint": signpoint, // 本次签到获得的积分
+                "signTime": signTime, // 当前签到时间
+                "allpoint": all_point + signpoint, // 总积分
+                "count": count + 1 // 签到次数
+            };
         }
-        return { "cmd":"get", "status": 0, "getpoint": nowPoint, "signTime": signTime, "allpoint": all_point, "count": count };
+        // 如果日期相同（即今天已经签到过）
+        return { 
+            "cmd": "get", 
+            "status": 0, // 签到失败
+            "getpoint": nowPoint, // 本次签到获得的积分
+            "signTime": signTime, // 当前签到时间
+            "allpoint": all_point, // 总积分
+            "count": count // 签到次数
+        };
     }
 
   // 参数：session， 返回：json
