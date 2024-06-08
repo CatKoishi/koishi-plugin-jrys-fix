@@ -16,8 +16,8 @@
   "koishi": {
     "browser": true,
     "description": {
-      "en": "A sign-in plugin",
-      "zh": "又一个每日运势签到插件"
+      "en": "jrys-supper-ultra-ti-max",
+      "zh": "jrys-max,omega-miyabot签到的复刻加强插件,把贝拉bot签到分离copy.后面忘了"
     },
     "service": {
       "required": [
@@ -31,7 +31,8 @@
     "chatbot",
     "koishi",
     "plugin",
-    "sign in"
+    "sign in",
+    "签到"
   ],
   "peerDependencies": {
     "koishi": "^4.17.8"
