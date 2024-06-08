@@ -17,7 +17,7 @@ export interface Config {
   imgurl: string,
   signpointmax: number,
   signpointmin: number,
-  textfont:string,
+  // textfont:string,
   // lotteryOdds: number,
   // callme: boolean,
   // waittip: boolean,
@@ -32,7 +32,7 @@ export const Config: Schema<Config> = Schema.object({
   .description('签到积分随机最小值'),
   signpointmax: Schema.number().default(100)
   .description('签到积分随机最大值'),
-  textfont: Schema.string().description("`请填写.ttf 字体文件的绝对路径`").default(path.join(__dirname, '/font/pixel.ttf')),
+  // textfont: Schema.string().description("`请填写.ttf 字体文件的绝对路径`").default(path.join(__dirname, '/font/pixel.ttf')),
   // lotteryOdds: Schema.percent().default(0.6)
   // .description('抽奖指令中倍率的概率(默认0.6)'),
   // callme: Schema.boolean().default(false)
@@ -254,7 +254,7 @@ export function apply(ctx: Context, config: Config) {
     }
     // return `${level}`
     // return `${levelname}`
-    const textfont = config.textfont.replace(/\\/g, '/');
+    const textfont = path.join(__dirname, '/font/pixel.ttf').replace(/\\/g, '/');
     // return `${LevelLines}`
     const allpoint = getSigninJson.allpoint;
     const allpoint_LevelLines = (`${allpoint}/${LevelLines}`).toString();
