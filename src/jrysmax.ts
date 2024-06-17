@@ -1,86 +1,65 @@
 // import { jrysJson } from './jrys'
-import {eventJson} from './event'
-import crypto from 'crypto'
 import * as fs from 'fs';
 import path from 'path'
 
+function fnv1aHash(str: string): number {
+  let hash = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    hash ^= str.charCodeAt(i);
+    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+  }
+  return hash >>> 0;
+}
+
 export class jrysmax {
     constructor() {}
-    async getJrys(uid:string|number, debug?: boolean) {
-        const md5 = crypto.createHash('md5');
-        const hash = crypto.createHash('sha256');
-        let etime = new Date().setHours(0, 0, 0, 0);
-        let userId:any;
-        if (!isNaN(Number(uid))) {
-            userId = uid;
-        } else {
-            if (uid) {
-            hash.update(uid + String(etime));
-            let hashhexDigest = hash.digest('hex');
-            userId = Number(parseInt(hashhexDigest, 16)) % 1000000001;
-            }
-            else {
-            md5.update("Default Jrys"+String(etime));
-            let hexDigest = md5.digest('hex');
-            userId = parseInt(hexDigest, 16) % 1000000001;
-            }
-        }
-        let todayJrys = (((etime/100000) * userId % 1000001) * 2333) % 512;
-        if(debug)
-            return {"jrys": todayJrys, "etime": (etime/100000) }
-        else
-            return todayJrys;
+  async getJrys(uid: string | number): Promise<number> {
+    const etime = new Date().setHours(0, 0, 0, 0).toString();
+    let userId: number;
+
+    if (typeof uid === 'number' || !isNaN(Number(uid))) {
+      userId = Number(uid);
+    } else {
+      if (uid) {
+        const hashInput = uid + etime;
+        userId = fnv1aHash(hashInput) % 1000000001;
+      } else {
+        const defaultInput = "Default Jrys" + etime;
+        userId = fnv1aHash(defaultInput) % 1000000001;
+      }
     }
 
-    async generateUserRandom(uid: string | number): Promise<number> {
-        const md5 = crypto.createHash('md5');
-        const hash = crypto.createHash('sha256');
-        let etime = new Date().setHours(0, 0, 0, 0);
-        let userId;
+    const todaySeed = (userId * parseInt(etime)) % 1000000001;
+    const randomFactor = Math.sin(todaySeed) * 10000;
+    const todayJrys = Math.floor((randomFactor - Math.floor(randomFactor)) * 512);
 
-        if (!isNaN(Number(uid))) {
-            userId = uid;
-        } else {
-            if (uid) {
-                hash.update(uid + String(etime));
-                let hashhexDigest = hash.digest('hex');
-                userId = Number(parseInt(hashhexDigest, 16)) % 1000000001;
-            } else {
-                md5.update("Default Jrys" + String(etime));
-                let hexDigest = md5.digest('hex');
-                userId = parseInt(hexDigest, 16) % 1000000001;
-            }
-        }
+    return todayJrys;
+  }
 
-        let todayJrys = (((etime / 100000) * userId % 1000001) * 2333) % 512;
-        return todayJrys;
+  seededRandom(seed: number): number {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  }
+
+  // 抽取四个宜不宜
+  async getRandomObjects(jsonObject: Array<any>, uid: string | number): Promise<Array<any>> {
+    if (!Array.isArray(jsonObject) || jsonObject.length < 4) {
+      throw new Error("输入必须是一个包含至少四个对象的数组");
     }
 
-    async getRandomObjects(jsonObject: Array<any>, uid: string | number): Promise<Array<any>> {
-        // if (!Array.isArray(jsonObject) || jsonObject.length < 4) {
-        //     throw new Error("输入必须是一个包含至少四个对象的数组");
-        // }
-        const seed = await this.generateUserRandom(uid);
-        const randomIndexes: Set<number> = new Set();
+    const seed = await this.getJrys(uid);
+    const randomIndexes: Set<number> = new Set();
 
-        while (randomIndexes.size < 4) {
-            const randomIndex = Math.floor(((seed * randomIndexes.size) % 2333) % jsonObject.length);
-            randomIndexes.add(randomIndex);
-        }
-        
-        return Array.from(randomIndexes).map(index => jsonObject[index]);
-    
+    let counter = 0;
+    while (randomIndexes.size < 4) {
+      const randomIndex = Math.floor(this.seededRandom(seed + counter) * jsonObject.length);
+      randomIndexes.add(randomIndex);
+      counter++;
     }
-    
 
-    async getFolderImg(folder:String) {
-        let imgfilename:any = this.readFilenames(folder);
-        const filteredArr = imgfilename.filter((filename) => {
-        return /\.(png|jpg|jpeg|ico|svg)$/i.test(filename);
-        });
-        return filteredArr;
-    }
-    
+    return Array.from(randomIndexes).map(index => jsonObject[index]);
+  }
+
     // 递归获取文件夹内所有文件的文件名
     async readFilenames(dirPath:any) {
         let filenames = [];

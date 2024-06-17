@@ -7,7 +7,7 @@ export const eventJson = [
   {
     "name": "打轴",
     "good": "一次性过",
-    "bad": "\"谁说话这么难懂\""
+    "bad": "谁说话这么难懂"
   },
   {
     "name": "剪辑",

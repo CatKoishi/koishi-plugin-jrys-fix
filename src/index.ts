@@ -3,7 +3,7 @@ import { pathToFileURL } from 'url'
 import { resolve } from 'path'
 import {} from "koishi-plugin-puppeteer";
 import { Page } from "puppeteer-core";
-import { Signin,levelInfos } from './signin';
+import { Signin, levelInfos } from './signin';
 import { jrysmax } from './jrysmax';
 import {eventJson} from './event'
 import fs from 'fs'
@@ -13,32 +13,20 @@ import path from 'path'
 export const name = 'jrys-max'
 
 export interface Config {
-  // superuser: string[],
   imgurl: string,
   signpointmax: number,
   signpointmin: number,
-  // textfont:string,
-  // lotteryOdds: number,
-  // callme: boolean,
-  // waittip: boolean,
 }
 
 export const Config: Schema<Config> = Schema.object({
-  // superuser: Schema.array(String)
-  // .description('超级用户id'),
+
   imgurl: Schema.string().role('link')
-  .description('随机横图api'),
+  .description('随机横图api').required(),
   signpointmin: Schema.number().default(1)
   .description('签到积分随机最小值'),
   signpointmax: Schema.number().default(100)
   .description('签到积分随机最大值'),
-  // textfont: Schema.string().description("`请填写.ttf 字体文件的绝对路径`").default(path.join(__dirname, '/font/pixel.ttf')),
-  // lotteryOdds: Schema.percent().default(0.6)
-  // .description('抽奖指令中倍率的概率(默认0.6)'),
-  // callme: Schema.boolean().default(false)
-  // .description("启用callme(需要安装callme插件)"),
-  // waittip: Schema.boolean().default(false)
-  // .description("启用渲染提示"),
+
 })
 
 export const inject = ['database','puppeteer']
@@ -72,49 +60,39 @@ async function fetchHitokoto(ctx: Context) {
   try {
       const response = await fetch('https://v1.hitokoto.cn/?c=a&c&b&k');
       const { hitokoto: hitokotoText ,from: fromText ,from_who: fromWhoText	} = await response.json();
-      // const hitokoto = [
-      //   `${hitokotoText}`,
-      //   `\n——`,
-      //   `${fromText}`
-      // ]
-      // return hitokoto;
-      // return (hitokotoText+`\n——`+fromText);
+
       let hitokoto
       if(fromWhoText !== null){
         hitokoto = `${hitokotoText}<br>  ——${fromWhoText} <br>⟪${fromText}⟫`;
       }else{
         hitokoto = `${hitokotoText}<br>  ——⟪${fromText}⟫`;
       }
-      
+
       return hitokoto;
   } catch (error) {
-      console.error('An error occurred while fetching hitokoto:', error);
-      return('Failed to fetch hitokoto');
+      console.error('获取 hitokoto 时出错:', error);
+      return('无法获取 hitokoto');
   }
 }
 
 export function apply(ctx: Context, config: Config) {
   // write your plugin here
   const signin = new Signin(ctx, config);
+  const jrys = new jrysmax();
+  const date = new Date();
 
   ctx.command("jrysmax", "今日运势")
-  // .alias("签到")
-  // .option('text','-t 纯文本输出')
   .userFields(['name'])
   .action(async ({session, options}) => {
-    const jrys = new jrysmax();
-    const date = new Date();
+    // return "你好"
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 确保月份为两位数
     const day = date.getDate().toString().padStart(2, '0'); // 确保日期为两位数
     const formattedDate = `${month}/${day}`;
-    const jrysData:any = await jrys.getJrys(session.userId? session.userId:2333);
+    const jrysData:any = await jrys.getJrys(session.userId);
+    // return "你好"
     const [gooddo1, gooddo2, baddo1, baddo2] = await jrys.getRandomObjects(eventJson,session.userId? session.userId:2333);
-    // console.log(constant1, constant2, constant3, constant4);
-    // const userfortune = await jrys.getEvent(session.userId? session.userId:2333);
-    // console.log(userfortune);
-    // return
-    // return jrysData
-    // await session.send (jrysData)
+
+    // return "你好"
     let jryslucky = jrysData
     let fortune_star = '';
     let fortune_text = '';
@@ -158,39 +136,36 @@ export function apply(ctx: Context, config: Config) {
       fortune_star = '★'.repeat(12)
       fortune_text = '天选之人'
     }
-    // return await fetchHitokoto(ctx)
+
     let name:any;
-    if (ctx.database){ 
+    if (ctx.database){
       name = session.username
     }
-    if (!name){ 
+    if (!name){
       name = session.author.name
     }
-    // if (ctx.database && config.callme) name = session.username;
-    // if (!name && config.callme) name = session.author.name;
-    // else name = session.username;
+
     name = name.length>12? name.substring(0,12):name;
-    
+
     let bgUrl;
     let etime = (new Date().getTime()) % 25565;
-    let filePath = resolve(__dirname, "./index/defaultImg/").replaceAll("\\", '/');
-    if (!config.imgurl) bgUrl = pathToFileURL(resolve(__dirname, filePath+"/"+(Random.pick(await getFolderImg(filePath))))).href;
-    else if(config.imgurl.match(/http(s)?:\/\/(.*)/gi))  bgUrl = (config.imgurl.match(/^http(s)?:\/\/(.*)#e#$/gi))? config.imgurl.replace('#e#',etime.toString()) : config.imgurl;
-    else bgUrl = pathToFileURL(resolve(__dirname, (config.imgurl + Random.pick(await getFolderImg(config.imgurl))))).href;
+
+    if(config.imgurl.match(/http(s)?:\/\/(.*)/gi)){
+      bgUrl = (config.imgurl.match(/^http(s)?:\/\/(.*)#e#$/gi)) ? config.imgurl.replace('#e#', etime.toString()) : config.imgurl
+    } else {
+      bgUrl = pathToFileURL(resolve(__dirname, (config.imgurl + Random.pick(await getFolderImg(config.imgurl))))).href
+    }
 
     // 数据结构 { "cmd":"get", "status": 1, "getpoint": signpoint, "signTime": signTime, "allpoint": signpoint, "count": 1 };
     const getSigninJson = await signin.callSignin(session);
     let lvline = signin.levelJudge(Number(getSigninJson.allpoint)).level_line;
 
-    // if (options.text) return <><at id={session.userId} />{getSigninJson.status? "签到成功！" : "今天已经签到过啦！"},本次签到获得积分:{getSigninJson.getpoint}</>
-
-    // if (config.waittip) await session.send("请稍等，正在渲染……");
     const hitokoto = await fetchHitokoto(ctx);
     let level = (signin.levelJudge(Number(getSigninJson.allpoint))).level
     let LevelLines = signin.getLevelLine(Number(getSigninJson.allpoint), levelInfos);
     let levelname
     let color
-    // return `${level}`
+
     if(level === 1){
       levelname = "群聊冒险者"
       color ="#838383"
@@ -252,10 +227,9 @@ export function apply(ctx: Context, config: Config) {
       levelname = "天选之人"
       color ="#ffd000"
     }
-    // return `${level}`
-    // return `${levelname}`
+
     const textfont = path.join(__dirname, '/font/pixel.ttf').replace(/\\/g, '/');
-    // return `${LevelLines}`
+
     const allpoint = getSigninJson.allpoint;
     const allpoint_LevelLines = (`${allpoint}/${LevelLines}`).toString();
     const gooddo = `${gooddo1.name}——${gooddo1.good}<br>${gooddo2.name}——${gooddo2.good}`;
@@ -270,7 +244,7 @@ export function apply(ctx: Context, config: Config) {
       .replace("##jryslucky##", jryslucky)
       .replace("##level##", levelname)
       .replace("##color##", color)
-      .replace("##pointlevel##", allpoint_LevelLines) 
+      .replace("##pointlevel##", allpoint_LevelLines)
       .replace("##bgUrl##", bgUrl)
       .replace("##avatarUrl##", session.platform == 'qq'? `http://q.qlogo.cn/qqapp/${session.bot.config.id}/${session.event.user?.id}/640`:session.author.avatar)
       .replace("##signinText##", getSigninJson.status? "签到成功！" : "今天已经签到过了哦~")
@@ -291,9 +265,19 @@ export function apply(ctx: Context, config: Config) {
       await page.goto(`file:///${resolve(__dirname, "./index/index.html")}`);
       await page.waitForSelector("#body");
       const element = await page.$("#body");
-      return h.image(await element.screenshot({
-              encoding: "binary"
-            }), "image/png")
+      let msg;
+      if (element) {
+        const imgBuf = await element.screenshot({
+          encoding: "binary"
+        });
+        msg = h.image(imgBuf, 'image/png');
+      } else {
+        msg = "Failed to capture screenshot.";
+      }
+      // 关闭页面
+      await page.close();
+      // 返回消息
+      return h.quote(session.event.message.id) + msg
     } catch (err) {
       logger.error(`[jrysmax Error]:\r\n`+err);
       return '哪里出的问题！md跟你爆了'
