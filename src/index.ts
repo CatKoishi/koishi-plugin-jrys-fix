@@ -1,4 +1,4 @@
-import { Context, Schema, h, Random, Logger  } from 'koishi'
+import { Context, Schema, h, Random, Logger ,Service } from 'koishi'
 import { pathToFileURL } from 'url'
 import { resolve } from 'path'
 import {} from "koishi-plugin-puppeteer";
@@ -6,6 +6,7 @@ import { Page } from "puppeteer-core";
 import { Signin, levelInfos } from './signin';
 import { jrysmax } from './jrysmax';
 import {eventJson} from './event'
+import { } from 'koishi-plugin-axlmly-role-playing-game'
 import fs from 'fs'
 import path from 'path'
 
@@ -28,8 +29,22 @@ export const Config: Schema<Config> = Schema.object({
   .description('签到积分随机最大值'),
 
 })
+declare module 'koishi' {
+  interface Context  {
+    jrysmaxs: jrysmaxs;
+  }
+}
+export class jrysmaxs extends Service {
+  constructor(ctx: Context) {
+    // 这样写你就不需要手动给 ctx 赋值了
+    super(ctx, 'jrysmaxs', true);
+  }
+}
 
-export const inject = ['database','puppeteer']
+export const inject = {
+  "required":['database','puppeteer'],
+  "optional":['axlmlyrpg'],
+}
 
 const logger = new Logger('[jrys-max]>> ');
 
@@ -77,10 +92,13 @@ async function fetchHitokoto(ctx: Context) {
 
 export function apply(ctx: Context, config: Config) {
   // write your plugin here
+  ctx.plugin(jrysmaxs)
+  ctx.inject(['jrysmaxs'], (ctx) => {
+  })
   const signin = new Signin(ctx, config);
   const jrys = new jrysmax();
   const date = new Date();
-
+  // ctx.plugin(Jrysmax)
   ctx.command("jrysmax", "今日运势")
   .userFields(['name'])
   .action(async ({session, options}) => {
@@ -89,10 +107,9 @@ export function apply(ctx: Context, config: Config) {
     const day = date.getDate().toString().padStart(2, '0'); // 确保日期为两位数
     const formattedDate = `${month}/${day}`;
     const jrysData:any = await jrys.getJrys(session.userId);
-    // return "你好"
+
     const [gooddo1, gooddo2, baddo1, baddo2] = await jrys.getRandomObjects(eventJson,session.userId? session.userId:2333);
 
-    // return "你好"
     let jryslucky = jrysData
     let fortune_star = '';
     let fortune_text = '';
@@ -157,7 +174,7 @@ export function apply(ctx: Context, config: Config) {
     }
 
     // 数据结构 { "cmd":"get", "status": 1, "getpoint": signpoint, "signTime": signTime, "allpoint": signpoint, "count": 1 };
-    const getSigninJson = await signin.callSignin(session);
+    const getSigninJson = await signin.callSignin(session,ctx);
     let lvline = signin.levelJudge(Number(getSigninJson.allpoint)).level_line;
 
     const hitokoto = await fetchHitokoto(ctx);
@@ -234,9 +251,18 @@ export function apply(ctx: Context, config: Config) {
     const allpoint_LevelLines = (`${allpoint}/${LevelLines}`).toString();
     const gooddo = `${gooddo1.name}——${gooddo1.good}<br>${gooddo2.name}——${gooddo2.good}`;
     const baddo = `${baddo1.name}——${baddo1.bad}<br>${baddo2.name}——${baddo2.bad}`;
+    let coins = (await ctx.database.get('jrys_max', { id: String(session.userId) }))[0]?.coins;
+    let exp = (await ctx.database.get('jrys_max', { id: String(session.userId) }))[0]?.exp;
+
     let page: Page;
     try {
-      let templateHTML = fs.readFileSync(path.resolve(__dirname, "./index/template.txt"), "utf-8");
+      let templateHTML
+      if(ctx.axlmlyrpg){
+        templateHTML = fs.readFileSync(path.resolve(__dirname, "./index/template2.txt"), "utf-8");
+      }else{
+        templateHTML = fs.readFileSync(path.resolve(__dirname, "./index/template.txt"), "utf-8");
+      }
+
       let template = templateHTML
       .replace("##textfont##", textfont)
       .replace("##todayExp##", getSigninJson.getpoint.toString())
@@ -246,6 +272,8 @@ export function apply(ctx: Context, config: Config) {
       .replace("##color##", color)
       .replace("##pointlevel##", allpoint_LevelLines)
       .replace("##bgUrl##", bgUrl)
+      .replace("##coins##", coins)
+      .replace("##exp##", exp)
       .replace("##avatarUrl##", session.platform == 'qq'? `http://q.qlogo.cn/qqapp/${session.bot.config.id}/${session.event.user?.id}/640`:session.author.avatar)
       .replace("##signinText##", getSigninJson.status? "签到成功！" : "今天已经签到过了哦~")
       .replace("##date##", (formattedDate))

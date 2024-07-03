@@ -1,12 +1,17 @@
-import { Context, Schema, Time, Random } from 'koishi'
+import { Context, Schema, Time, Random, Logger} from 'koishi'
 import { } from "koishi-plugin-rate-limit"
+import { Config} from 'koishi-plugin-axlmly-role-playing-game'
+import {jrysmax} from "./jrysmax";
+
 
 declare module 'koishi' {
     interface Tables {
         jrys_max: Jrys_max;
     }
 }
-
+// export class Jrys_max extends Service {
+//
+// }
 export interface Jrys_max {
     id: string
     name: string
@@ -14,6 +19,8 @@ export interface Jrys_max {
     point: number
     count: number
     current_point: number
+    coins: number
+    exp: number
     }
 
 interface TimeGreeting {
@@ -58,7 +65,11 @@ export const levelInfos: LevelInfo[] = [
     { level:20, level_line:18265024000 },
 ];
 
-export const inject = ['database']
+export const inject = {
+  "required":['database','puppeteer'],
+  "optional":['axlmlyrpg'],
+}
+const logger = new Logger('[JrysMax]>> ');
 
 // 参数: ctx:Context, config?:Config
 export class Signin {
@@ -74,18 +85,22 @@ export class Signin {
         point: "unsigned",
         count: "unsigned",
         current_point: "unsigned",
+        coins: "unsigned",
+        exp: "unsigned",
     })
     }
 
   //                  0:已签到, 1:签到成功, 2:未签到, 3:抽奖
   // { "status": 1, "getpoint": signpoint, "signTime": signTime, "allpoint": signpoint, "count": 1 };
   // 参数：session， 返回：json
-    async callSignin(session) {
+    async callSignin(session,ctx) {
         let name:any;
         if (this.ctx.database && this.cfg.callme) name = session.username;
         if (!name && this.cfg.callme) name = session.author.name;
         else name = session.username;
         name = name.length>12? name.substring(0,12):name;
+        const jrys = new jrysmax();
+        const jrysData:any = await jrys.getJrys(session.userId);
 
         let signTime =  Time.template('yyyy-MM-dd hh:mm:ss', new Date());
         let all_point = (await this.ctx.database.get('jrys_max', { id: String(session.userId) }))[0]?.point;
@@ -94,10 +109,25 @@ export class Signin {
         let dbname = (await this.ctx.database.get('jrys_max', { id: String(session.userId) }))[0]?.name;
         let signpoint = Random.int(this.cfg.signpointmin,this.cfg.signpointmax);
         let nowPoint = (await this.ctx.database.get('jrys_max', { id: String(session.userId) }))[0]?.current_point;
+        let coins: number
+        const config=new Config()
+
         if (!dbname) await this.ctx.database.upsert('jrys_max', [{ id: (String(session.userId)), name: name }]);
         if (!all_point && !time) {
-            await this.ctx.database.upsert('jrys_max', [{ id: (String(session.userId)), name: name, time: signTime, point: Number(signpoint), count: 1, current_point: Number(signpoint) }]);
-            // logger.info(`${name}(${session.userId}) 第一次签到成功，写入数据库！`)
+            await this.ctx.database.upsert('jrys_max', [{
+              id: (String(session.userId)),
+              name: name,
+              time: signTime,
+              point: Number(signpoint),
+              count: 1,
+              current_point: Number(signpoint)
+            }]);
+            if(ctx.axlmlyrpg){
+              await ctx.axlmlyrpg.getdata(session,config,ctx)
+              await ctx.axlmlyrpg.updataconis(ctx,session,config,jrysData)
+            }
+            console.log(coins)
+            logger.info(`${name}(${session.userId}) 第一次签到成功，写入数据库！`)
             return {
               "cmd":"get",
               "status": 1,
@@ -116,6 +146,10 @@ export class Signin {
                 count: count + 1,
                 current_point: Number(signpoint)
             }]);
+          if(ctx.axlmlyrpg){
+            await ctx.axlmlyrpg.getdata(session,config,ctx)
+            await ctx.axlmlyrpg.updataconis(ctx,session,config,jrysData)
+          }
             // 记录签到成功的信息
             return {
                 // "cmd": "get",
@@ -136,19 +170,6 @@ export class Signin {
             "count": count // 签到次数
         };
     }
-
-  // // 参数：session， 返回：json
-  //   async signQuery(session) {
-  //       let all_point = (await this.ctx.database.get('jrys_max', { id: String(session.userId) }))[0]?.point;
-  //       let time = (await this.ctx.database.get('jrys_max', { id: String(session.userId) }))[0]?.time;
-  //       let count = (await this.ctx.database.get('jrys_max', { id: String(session.userId) }))[0]?.count;
-  //       let current_point = (await this.ctx.database.get('jrys_max', { id: String(session.userId) }))[0]?.current_point;
-  //       let nowTime =  Time.template('yyyy-MM-dd hh:mm:ss', new Date());
-  //       if (Number(time.slice(8,10)) - Number(nowTime.slice(8,10))) {
-  //           return { "cmd":"query", "status": 2, "getpoint": current_point? current_point:0, "signTime": time? time:"暂无数据", "allpoint": all_point? all_point:0, "count": count? count:0 };
-  //       }
-  //       return { "cmd":"query", "status": 0, "getpoint": current_point? current_point:0, "signTime": time? time:"暂无数据", "allpoint": all_point? all_point:0, "count": count? count:0 };
-  //   }
 
     levelJudge(all_point: number): LevelInfo {
             for (const levelInfo of levelInfos) {
