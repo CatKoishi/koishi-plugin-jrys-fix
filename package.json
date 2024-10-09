@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-jrys-max",
   "description": "",
-  "version": "0.3.11",
+  "version": "0.3.12",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -24,6 +24,7 @@
         "puppeteer",
         "database"
       ],
+      "optional": ["axlmlyrpg"],
       "implements": [
         "jrysmaxs"
       ]
@@ -38,7 +39,9 @@
     "签到"
   ],
   "peerDependencies": {
-    "koishi": "^4.17.9",
+    "koishi": "^4.18.0"
+  },
+  "devDependencies": {
     "koishi-plugin-axlmly-role-playing-game": "^1.0.11"
   }
 }

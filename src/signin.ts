@@ -1,6 +1,6 @@
 import { Context, Schema, Time, Random, Logger} from 'koishi'
 import { } from "koishi-plugin-rate-limit"
-import { Config} from 'koishi-plugin-axlmly-role-playing-game'
+import { Config } from 'koishi-plugin-axlmly-role-playing-game'
 import {jrysmax} from "./jrysmax";
 
 
@@ -9,9 +9,7 @@ declare module 'koishi' {
         jrys_max: Jrys_max;
     }
 }
-// export class Jrys_max extends Service {
-//
-// }
+
 export interface Jrys_max {
     id: string
     name: string
@@ -69,6 +67,7 @@ export const inject = {
   "required":['database','puppeteer'],
   "optional":['axlmlyrpg'],
 }
+
 const logger = new Logger('[JrysMax]>> ');
 
 // 参数: ctx:Context, config?:Config
@@ -110,7 +109,8 @@ export class Signin {
         let signpoint = Random.int(this.cfg.signpointmin,this.cfg.signpointmax);
         let nowPoint = (await this.ctx.database.get('jrys_max', { id: String(session.userId) }))[0]?.current_point;
         let coins: number
-        const config=new Config()
+
+        const config = new Config()
 
         if (!dbname) await this.ctx.database.upsert('jrys_max', [{ id: (String(session.userId)), name: name }]);
         if (!all_point && !time) {
@@ -126,7 +126,7 @@ export class Signin {
               await ctx.axlmlyrpg.getdata(session,config,ctx)
               await ctx.axlmlyrpg.updataconis(ctx,session,config,jrysData)
             }
-            console.log(coins)
+            // console.log(coins)
             logger.info(`${name}(${session.userId}) 第一次签到成功，写入数据库！`)
             return {
               "cmd":"get",

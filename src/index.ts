@@ -97,12 +97,13 @@ export function apply(ctx: Context, config: Config) {
   })
   const signin = new Signin(ctx, config);
   const jrys = new jrysmax();
-  const date = new Date();
+  // const date = new Date();
   // ctx.plugin(Jrysmax)
   ctx.command("jrysmax", "今日运势")
   .userFields(['name'])
   .action(async ({session, options}) => {
     // return "你好"
+    const date = new Date();
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 确保月份为两位数
     const day = date.getDate().toString().padStart(2, '0'); // 确保日期为两位数
     const formattedDate = `${month}/${day}`;
