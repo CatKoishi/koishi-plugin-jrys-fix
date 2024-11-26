@@ -1,0 +1,280 @@
+<!--
+ *抄的Twiyin0的贝拉bot签到和Omega Miya的签到
+-->
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运势签到V1.0</title>
+    <style>
+        @font-face {
+            font-family: "pixel";
+            src: url("##textfont##") format("truetype");
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .top-image {
+            position: relative;
+            object-fit: cover;
+        }
+
+        .top-image img {
+            width: 100%;
+            display: block;
+        }
+
+        .avatar {
+            position: absolute;
+            bottom: -32px;
+            left: 5%;
+            max-width: 96px;
+            max-height: 96px;
+            border-radius: 10px;
+            border: 3px solid #fff;
+            background: #fff;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 55px;
+            position: relative;
+        }
+
+        .header div {
+            flex-grow: 1;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 60px;
+            font-weight: bold;
+        }
+
+        .hitokoto {
+            margin-bottom: 20px;
+            color: #838383;
+            font-size: 20px;
+            font-weight: bold;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        .jryslucky p {
+            margin: 0px 0 0;
+            color: #838383;
+            font-size: 20px;
+            font-weight: bold;
+            /* 将字体设置为粗体 */
+            padding-left: 24px;
+            /* 左内边距为24像素 */
+            padding-right: 24px;
+            /* 右内边距为24像素 */
+        }
+
+        .header p {
+            margin: 0px 0 0;
+            color: #666;
+            font-size: 24px;
+        }
+
+        .date {
+            font-size: 60px;
+            color: #666666;
+            margin: 0;
+            padding-left: 200px;
+            font-weight: bold;
+            /* 将字体设置为粗体 */
+        }
+
+        .content {
+            padding: 0 20px;
+
+        }
+
+        .content p {
+            color: #838383;
+            margin-top: 0px;
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .status {
+            margin-top: 0px;
+            color: #838383;
+
+        }
+
+        .status p {
+            color: #838383;
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .level-bar {
+            margin-top: 0px;
+            display: flex;
+            align-items: center;
+        }
+
+        .level-bar .bar-container {
+            width: 95%;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-right: 10px;
+        }
+
+        .level-bar .progress {
+            width: calc(##persent##%);
+            background: #666666;
+            padding: 5px 0;
+            border-radius: 5px 0 0 5px;
+            height: 18px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .level-info {
+            font-family: 'pixel';
+            margin-top: 0px;
+            font-size: 30px;
+            white-space: nowrap;
+            display: inline;
+            text-align: center;
+        }
+
+        .parent {
+            text-align: center;
+        }
+
+        .special-font {
+            font-family: 'pixel';
+            margin-top: 0px;
+            font-size: 30px;
+            font-weight: bold;
+            color: ##color##;
+            display: inline
+        }
+
+        .pointlevel {
+            font-family: 'pixel';
+            color: #b4b1b1;
+            margin-top: 3px;
+            margin-right: 28px;
+            margin-left: auto;
+            font-size: 24px;
+            font-weight: bold;
+            white-space: nowrap;
+            float: right;
+        }
+
+        .fortune {
+            margin-top: 20px;
+            font-size: 35px;
+            font-weight: bold;
+        }
+
+        .stars {
+            font-family: 'pixel';
+            margin-top: 10px;
+        }
+
+        .stars span {
+            font-size: 32px;
+            background: #666666;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .userfortune {
+            display: inline;
+            margin-top: 20px;
+            font-size: 35px;
+            font-weight: bold;
+        }
+
+        .userfortune p {
+            margin-top: 10px;
+        }
+
+        .credit {
+            margin-top: 5px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body id="body">
+    <div class="container">
+        <div class="top-image">
+            <img src="##bgUrl##" alt="Top Image">
+            <img class="avatar" src="##avatarUrl##" alt="Avatar">
+        </div>
+        <div class="header">
+            <div>
+                <h1>##hello##</h1>
+            </div>
+            <div class="date">##date##</div>
+        </div>
+        <div class="hitokoto">
+            <p>##signTxt##</p>
+        </div>
+        <div class="content">
+            <p><strong>@##user##</strong> ##signinText## 经验+##todayExp##</p>
+
+            <div class="level-info">
+                <span class="special-font">&#x2020;##level##&#x2020;</span>
+                <div class="pointlevel">##pointlevel##</div>
+            </div>
+            <div class="level-bar">
+                <div class="bar-container">
+                    <div class="progress"></div>
+                </div>
+            </div>
+
+            <div class="fortune">运势: ##jryslucky##<br><strong>##fortunate##</strong></div>
+            <hr>
+            <div class="userfortune">
+                <strong>宜</strong>
+            </div>
+            <p>##gooddo##</p>
+            <hr>
+            <div class="userfortune">
+                <strong>不宜</strong>
+            </div>
+            <p>##baddo##</p>
+            <hr>
+        </div>
+        <div class="credit">
+            随机生成 请勿迷信 | NyaKoishi © 2024
+        </div>
+    </div>
+</body>
+
+</html>

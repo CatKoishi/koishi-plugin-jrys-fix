@@ -1,0 +1,219 @@
+<!--
+ *抄的Twiyin0的贝拉bot签到和Omega Miya的签到
+-->
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运势签到V1.0</title>
+    <style>
+        @font-face {
+            font-family: "pixel";
+            src: url("/koishi/node_modules/koishi-plugin-jrys-fix/lib/font/pixel.ttf") format("truetype");
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-left: 24px;
+            margin-right: 24px;
+            margin-top: -50px;
+        }
+        
+        .avatar {
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 10px;
+            border: 3px solid #ffffff;
+        }
+
+        .dateInfo {
+            font-size: 60px;
+            font-weight: bold;
+            width: 80%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: baseline;
+            border-radius: 10px;
+            border: 3px solid #d8d8d8;
+            background: #ffffff;
+        }
+
+        .dateInfo span {
+            margin-left: 16px;
+            margin-right: 16px;
+        }
+
+        .hitokoto {
+            color: #838383;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 0 20px;
+        }
+
+        .content p {
+            white-space: pre-wrap;
+            color: #838383;
+            margin-top: 0px;
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .levelInfo {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            font-size: 30px;
+            font-weight: bold;
+            white-space: nowrap;
+            align-items: baseline;
+        }
+
+        .level-bar {
+            margin-top: 0px;
+            display: flex;
+            align-items: center;
+        }
+
+        .level-bar .bar-container {
+            width: 100%;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .level-bar .progress {
+            width: calc(90.000%);
+            background: #666666;
+            padding: 5px 0;
+            border-radius: 5px 0 0 5px;
+            height: 18px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .fortune {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            margin-right: 10px;
+        }
+
+        .toDo {
+            display: flex;
+            flex-direction: row;
+            margin-right: 10px;
+            margin-top: 20px;
+        }
+
+        .toDo p {
+            margin-top: -3px;
+            margin-left: 32px;
+            font-size: 20px;
+        }
+
+        .toDoBg {
+            border-radius: 1em;
+            width: 48px;
+            height: 48px;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+        }
+
+        .credit {
+            margin-top: 5px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body id="body">
+    <div class="container">
+
+        <img style="width: 100%;" src="0.jpg" alt="Top Image">
+
+        <div class="header">
+            <img class="avatar" src="avatar.jpg" alt="Avatar">
+            <div class="dateInfo">
+                <span class="greeting">下午好</span>
+                <span style="color: #666666;">11/26</span>
+            </div>
+        </div>
+        
+        <div class="hitokoto">
+            <p>『云会变，树会变，山川河流会变，哪能奢求别人，永远不改变呢。』<br>—— 白落落「思无邪」</p>
+        </div>
+
+        <div class="content">
+
+            <p><strong>@这是一个很长很长的名字...</strong> 签到成功！EXP+30 Coin+15</p>
+
+            <div class="levelInfo">
+                <span style="color: #838383;">荒野漫步者</span>
+                <span style="color: #b4b1b1;">562/1000</span>
+            </div>
+
+            <div class="level-bar">
+                <div class="bar-container">
+                    <div class="progress"></div>
+                </div>
+            </div>
+
+            <div class="fortune">
+                <span style="font-size: 36px; font-weight: bold;">🍀169</span>
+                <span style="font-size: 32px;">[点外卖很晚才会送到的程度]</span>
+            </div>
+            
+            <hr>
+
+            <div class="toDo">
+                <div class="toDoBg" style="background-color: #D4473D;"><span>宜</span></div>
+                <p>看直播——喜欢的V开歌回啦<br>招人——你面前这位有成为牛人的潜质</p>
+            </div>
+
+            <div class="toDo">
+                <div class="toDoBg" style="background-color: #000000;"><span>忌</span></div>
+                <p>出门带伞——好运气都被遮住了<br>卖弱——Boy♂next♂door</p>
+            </div>
+            
+            
+        </div>
+        <div class="credit">
+            随机生成 请勿迷信 | NyaKoishi © 2024
+        </div>
+    </div>
+</body>
+
+</html>
