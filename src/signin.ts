@@ -1,66 +1,67 @@
-import { Context, Schema, Time, Random, Logger} from 'koishi'
-import { } from "koishi-plugin-rate-limit"
+import { Context } from 'koishi'
 import { Jrys } from "./roll";
-
+import { Config } from '.';
+import { } from 'koishi-plugin-monetary'
 
 declare module 'koishi' {
-    interface Tables {
-        jrys: _UserFortune;
-    }
+  interface Tables {
+    jrys: _UserFortune;
+    jrys_max: any;
+  }
 }
 
 export interface _UserFortune {
-    id: number    // uid
-    name: string  // 昵称
-    time: Date  // 最近的签到时间
-    exp: number // 总经验
-    signCount: number // 签到次数
+  id: number    // uid
+  name: string  // 昵称
+  time: Date  // 最近的签到时间
+  exp: number // 总经验
+  signCount: number // 签到次数
 }
 
 interface TimeGreeting {
-    range: [number, number];
-    message: string;
+  range: [number, number];
+  message: string;
 }
 
 const timeGreetings: TimeGreeting[] = [
-    { range: [ 0,  5], message: '晚安' },
-    { range: [ 5,  9], message: '早上好' },
-    { range: [ 9, 11], message: '早上好' },
-    { range: [11, 14], message: '中午好' },
-    { range: [14, 18], message: '下午好' },
-    { range: [18, 20], message: '傍晚好' },
-    { range: [20, 24], message: '晚上好' },
+  { range: [ 0,  5], message: '晚安' },
+  { range: [ 5,  9], message: '早上好' },
+  { range: [ 9, 11], message: '上午好' },
+  { range: [11, 14], message: '中午好' },
+  { range: [14, 18], message: '下午好' },
+  { range: [18, 20], message: '傍晚好' },
+  { range: [20, 24], message: '晚上好' },
 ];
 
 export interface LevelInfo {
-    level: number;
-    levelExp: number;
-    levelName: string;
-    levelColor: string;
+  level: number;
+  levelExp: number;
+  levelName: string;
+  levelColor: string;
 }
 
 export const defaultLevelInfo = [
-    { level: 0, levelExp: 0, levelName: "不知名杂鱼", levelColor: "#838383" },
-    { level: 1, levelExp: 500, levelName: "荒野漫步者", levelColor: "#838383" },
-    { level: 2, levelExp: 1000, levelName: "拓荒者", levelColor: "#838383" },
-    { level: 3, levelExp: 1500, levelName: "冒险家", levelColor: "#838383" },
-    { level: 4, levelExp: 2000, levelName: "传说的冒险家", levelColor: "#000000" },
-    { level: 5, levelExp: 3000, levelName: "隐秘收藏家", levelColor: "#000000" },
-    { level: 6, levelExp: 4000, levelName: "言灵探索者", levelColor: "#42bc05" },
-    { level: 7, levelExp: 5000, levelName: "水系魔法师", levelColor: "#42bc05" },
-    { level: 8, levelExp: 6000, levelName: "水系魔导师", levelColor: "#42bc05" },
-    { level: 9, levelExp: 8000, levelName: "藏书的魔女", levelColor: "#2003da" },
-    { level:10, levelExp: 10000, levelName: "人形图书馆", levelColor: "#2003da" },
-    { level:11, levelExp: 15000, levelName: "文明归档员", levelColor: "#2003da" },
-    { level:12, levelExp: 20000, levelName: "高塔思索者", levelColor: "#03a4da" },
-    { level:13, levelExp: 25000, levelName: "未知探索者", levelColor: "#03a4da" },
-    { level:14, levelExp: 30000, levelName: "背负真相之人", levelColor: "#9d03da" },
-    { level:15, levelExp: 35000, levelName: "守密人", levelColor: "#9d03da" },
-    { level:16, levelExp: 40000, levelName: "被缚的倒吊者", levelColor: "#9d03da" },
-    { level:17, levelExp: 45000, levelName: "崩毁世界之人", levelColor: "#f10171" },
-    { level:18, levelExp: 50000, levelName: "命运眷顾者", levelColor: "#f10171" },
-    { level:19, levelExp: 100000, levelName: "文明领航员", levelColor: "#c9b86d" },
-    { level:20, levelExp: 1000000, levelName: "天选之人", levelColor: "#ffd000" }
+  { level: 0, levelExp: 0, levelName: "不知名杂鱼", levelColor: "#838383" },
+  { level: 1, levelExp: 500, levelName: "荒野漫步者", levelColor: "#838383" },
+  { level: 2, levelExp: 1000, levelName: "拓荒者", levelColor: "#838383" },
+  { level: 3, levelExp: 1500, levelName: "冒险家", levelColor: "#838383" },
+  { level: 4, levelExp: 2000, levelName: "传说的冒险家", levelColor: "#000000" },
+  { level: 5, levelExp: 3000, levelName: "隐秘收藏家", levelColor: "#000000" },
+  { level: 6, levelExp: 4000, levelName: "言灵探索者", levelColor: "#42bc05" },
+  { level: 7, levelExp: 5000, levelName: "水系魔法师", levelColor: "#42bc05" },
+  { level: 8, levelExp: 6000, levelName: "水系魔导师", levelColor: "#42bc05" },
+  { level: 9, levelExp: 8000, levelName: "藏书的魔女", levelColor: "#2003da" },
+  { level:10, levelExp: 10000, levelName: "人形图书馆", levelColor: "#2003da" },
+  { level:11, levelExp: 15000, levelName: "文明归档员", levelColor: "#2003da" },
+  { level:12, levelExp: 20000, levelName: "高塔思索者", levelColor: "#03a4da" },
+  { level:13, levelExp: 25000, levelName: "未知探索者", levelColor: "#03a4da" },
+  { level:14, levelExp: 30000, levelName: "背负真相之人", levelColor: "#9d03da" },
+  { level:15, levelExp: 35000, levelName: "守密人", levelColor: "#9d03da" },
+  { level:16, levelExp: 40000, levelName: "被缚的倒吊者", levelColor: "#9d03da" },
+  { level:17, levelExp: 45000, levelName: "崩毁世界之人", levelColor: "#f10171" },
+  { level:18, levelExp: 50000, levelName: "命运眷顾者", levelColor: "#f10171" },
+  { level:19, levelExp: 100000, levelName: "文明领航员", levelColor: "#c9b86d" },
+  { level:20, levelExp: 1000000, levelName: "天选之人", levelColor: "#ffd000" }
 ];
 
 export interface FortuneInfo {
@@ -92,6 +93,11 @@ export const initDatabase = (ctx: Context) => {
     exp: "unsigned",
     signCount: "unsigned"
   })
+  ctx.model.extend("jrys_max", {
+    id: "string",
+    point: "unsigned",
+    count: "unsigned"
+  })
 }
 
 
@@ -99,7 +105,7 @@ export const initDatabase = (ctx: Context) => {
 export class Signin {
   public ctx:Context;
   public cfg:any;
-  constructor( context:Context, config:any ) {
+  constructor( context: Context, config: Config ) {
     this.ctx = context;
     this.cfg = config;
   }
@@ -107,43 +113,53 @@ export class Signin {
   //             0:签到成功, 1:已签到
   // { "status": 1, "getpoint": signpoint, "signTime": signTime, "allpoint": signpoint, "count": 1 };
   // 参数：session， 返回：json
-  async callSignin(ctx: Context, uid:number, username:string) {
+  async callSignin(uid:number, pid: string, username:string) {
     const date = new Date();
     const roll = new Jrys();
 
     const exp = await roll.random(this.cfg.signExp[0], this.cfg.signExp[1]);
     const coin = await roll.random(this.cfg.signCoin[0], this.cfg.signCoin[1]);
 
-    const userData = await ctx.database.get('jrys', {id: uid});
-
-    if( userData.length === 0) { // No UserData -> Create new one
-      ctx.database.create('jrys', {
+    const userData = await this.ctx.database.get('jrys', {id: uid});
+    
+    if( userData.length === 0) { // No UserData -> Create new one & Move Data from old database
+      let accCount = 0;
+      let accExp = 0;
+      const oldData = await this.ctx.database.get('jrys_max', { id: pid });
+      if(oldData.length === 0) {
+        accCount = 1;
+        accExp = exp;
+      } else {
+        accCount = oldData[0].count + 1;
+        accExp = oldData[0].point + exp;
+      }
+      
+      this.ctx.database.create('jrys', {
         id:uid,
         name:username,
         time: date,
-        exp: exp,
-        signCount: 1
+        exp: accExp,
+        signCount: accCount
       });
-      // todo: add coin with monetary
+      this.ctx.monetary.gain(uid, coin, this.cfg.currency);
 
-      return { status: 0, getExp: exp, allExp: exp, getCoin: coin, allCoin: coin, signTime: date, count: 1 };
+      return { status: 0, getExp: exp, allExp: accExp, getCoin: coin, signTime: date, count: accCount };
     }
 
     if( userData[0].time.getDate() === date.getDate() ) { // Already Signin today
       return { status: 1 }
     } else { // Update User Data
       let accExp = userData[0].exp + exp;
-      let accCoin = coin;
       let accCount = userData[0].signCount+1;
-      ctx.database.set('jrys', {id: uid}, {
+      this.ctx.database.set('jrys', {id: uid}, {
         name: username,
         time: date,
         exp: accExp,
         signCount: accCount
       })
-      // add Coin to Monetary
+      this.ctx.monetary.gain(uid, coin, this.cfg.currency);
 
-      return { status: 0, getExp: exp, allExp: accExp, getCoin: coin, allCoin: accCoin, signTime: date, count: accCount };
+      return { status: 0, getExp: exp, allExp: accExp, getCoin: coin, signTime: date, count: accCount };
     }
   }
 

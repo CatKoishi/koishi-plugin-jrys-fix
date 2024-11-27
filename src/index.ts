@@ -1,6 +1,7 @@
 import { Context, Schema, h, Random, Logger } from 'koishi'
 import { pathToFileURL } from 'url'
-import { resolve } from 'path'
+import fs from 'fs'
+import path from 'path'
 
 import {} from "koishi-plugin-puppeteer";
 import { Page } from "puppeteer-core";
@@ -8,8 +9,6 @@ import { Page } from "puppeteer-core";
 import * as si from './signin';
 import { Jrys } from './roll';
 import { RollEvent, defaultEventJson } from './event'
-import fs from 'fs'
-import path from 'path'
 
 export const name = 'jrys-fix'
 
@@ -17,6 +16,7 @@ export interface Config {
   imgUrl: string
   signExp: number[]
   signCoin: number[]
+  currency: string
   levelSet: si.LevelInfo[]
   fortuneSet: si.FortuneInfo[]
   event: RollEvent[]
@@ -25,8 +25,9 @@ export interface Config {
 export const Config: Schema<Config> = Schema.object({
   imgUrl: Schema.string().role('link').description('随机横图api或者本地路径').required(),
   signExp: Schema.tuple([Number, Number]).description('签到获得经验范围').default([1, 100]),
+  currency: Schema.string().description('Monetary货币名称').default('coin'),
   signCoin: Schema.tuple([Number, Number]).description('签到获得货币范围').default([1, 100]),
-  
+
   levelSet: Schema.array(Schema.object({
     level: Schema.number().description('等级'),
     levelExp: Schema.number().description('等级最低经验'),
@@ -48,7 +49,7 @@ export const Config: Schema<Config> = Schema.object({
 })
 
 export const inject = {
-  "required":['database','puppeteer'],
+  "required":['database','puppeteer','monetary'],
 }
 
 const logger = new Logger('[JRYS]>> ');
@@ -62,8 +63,8 @@ export function apply(ctx: Context, config: Config) {
 
   // add custom event to eventJson
   let eventJson: RollEvent[] = [];
-  config.event.forEach(item => { eventJson.push(item) })
   defaultEventJson.forEach(item => { eventJson.push(item) })
+  config.event.forEach(item => { eventJson.push(item) })
 
   ctx.command("jrys", "今日运势")
   .userFields(['id', 'name'])
@@ -75,7 +76,7 @@ export function apply(ctx: Context, config: Config) {
     if (!name) { name = session.author.name }
     name = name.length>12? name.substring(0,11)+'...':name;
 
-    const sign = await signin.callSignin(ctx, session.user.id, name)
+    const sign = await signin.callSignin(session.user.id, session.userId, name)
     if( sign.status === 1 ) { return '今天已经签到过了哦~' }
 
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 确保月份为两位数
@@ -92,7 +93,7 @@ export function apply(ctx: Context, config: Config) {
     if(config.imgUrl.match(/http(s)?:\/\/(.*)/gi)) {
       bgUrl = config.imgUrl;
     } else {
-      bgUrl = pathToFileURL(resolve(__dirname, (config.imgUrl + Random.pick(await getFolderImg(config.imgUrl))))).href
+      bgUrl = pathToFileURL(path.resolve(__dirname, (config.imgUrl + Random.pick(await getFolderImg(config.imgUrl))))).href
     }
 
     const avatarUrl = session.platform == 'qq'? `http://q.qlogo.cn/qqapp/${session.bot.config.id}/${session.event.user?.id}/640`:session.author.avatar;
@@ -167,7 +168,7 @@ export function apply(ctx: Context, config: Config) {
 
       page = await ctx.puppeteer.page();
       await page.setViewport({ width: 600, height: 1080 * 2 });
-      await page.goto(`file:///${resolve(__dirname, "./index/index.html")}`);
+      await page.goto(`file:///${path.resolve(__dirname, "./index/index.html")}`);
       await page.waitForSelector("#body");
       const element = await page.$("#body");
       let msg;
