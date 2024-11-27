@@ -5,30 +5,29 @@
     <img width="160" src="https://koishi.chat/logo.png" alt="logo">
   </a>
   </a>
-<h3 align="center">koishi-plugin-jrys-max</h3>
+<h3 align="center">koishi-plugin-jrys-fix</h3>
 
-[![npm](https://img.shields.io/npm/v/koishi-plugin-jrys-max?style=flat-square)](https://www.npmjs.com/package/koishi-plugin-jrys-max)
+[![npm](https://img.shields.io/npm/v/koishi-plugin-jrys-fix?style=flat-square)](https://www.npmjs.com/package/koishi-plugin-jrys-fix)
 </div>
 
 # 今日运势生成器
 
-​	欢迎使用
+基于jrys-max开发，原本只是想修复一个bug，但是写着写着就一发不可收拾了（
 
 ## 功能
 
- 	不使用今日运势的今日运势插件
-
-​	搭载了一言和黄历功能,支持自定义背景图片
-
-​	和有点搞怪的内容文本
+- [x] 获取每日运势
+- [x] 支持 Monetary
+- [x] 自定义背景图
+- [x] 随机一言
+- [x] 可自定义的搞怪黄历
+- [x] 自定义签到等级
+- [x] 好看！
 
 ## 🚀 快速开始
 
-​	插件市场搜索jrys-max安装
+插件市场搜索jrys-fix安装
 
 #### BackgroundURL（背景图片设置）
 
-​	可以是本地路径,网络路径
-
-从贝拉bot单独扣出来了签到功能并加上了一言,并且做的和omega-miyabot的签到长得差不多
-参考:https://github.com/Twiyin0/koishi-plugin-bella-sign-in
+可以是本地路径,网络路径
