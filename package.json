@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-jrys-fix",
-  "description": "",
-  "version": "0.3.13",
+  "description": "nice signin plugin",
+  "version": "0.4.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -9,26 +9,33 @@
     "dist"
   ],
   "koishi": {
-    "browser": true,
     "description": {
       "en": "jrys-supper-ultra-ti-max-fix",
-      "zh": "jrys-max个人修改版,移除了对RPG的需求,稍微修改图片样式和等级.后面忘了"
+      "zh": "修改自jrys-max，对接monetary插件，支持更多自定义内容以及美观的运势图片"
     },
     "service": {
       "required": [
         "puppeteer",
         "database"
-      ],
-      "implements": [
-        "jrysmaxs"
       ]
     }
+  },
+  "author": {
+    "name": "NyaKoishi",
+    "email": "nyakoishi@qq.com",
+    "url": "https://github.com/CatKoishi"
+  },
+  "homepage": "https://github.com/CatKoishi/koishi-plugin-jrys-fix",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CatKoishi/koishi-plugin-jrys-fix"
   },
   "license": "MIT",
   "keywords": [
     "chatbot",
     "koishi",
     "plugin",
+    "运势",
     "sign in",
     "签到"
   ],

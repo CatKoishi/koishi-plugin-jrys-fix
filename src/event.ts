@@ -1,4 +1,11 @@
-export const eventJson = [
+export declare type RollEvent = {
+  name: string;
+  good: string;
+  bad: string;
+}
+
+
+export const defaultEventJson:RollEvent[] = [
   {
     "name": "看直播",
     "good": "喜欢的V开歌回啦",

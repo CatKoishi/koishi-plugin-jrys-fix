@@ -154,9 +154,9 @@ export class Signin {
     }
     let nExp:number | string;
     if(index >= info.length) { nExp = '???' } else { nExp = info[index].levelExp }
-
+    index--;
     return {
-      levelInfo: info[index--],
+      levelInfo: info[index],
       nextExp: nExp
     };
   }
