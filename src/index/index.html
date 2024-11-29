@@ -18,18 +18,10 @@
  
         body {
             font-family: osans4, emoji, Arial, sans-serif;
-            margin: 0;
-            background-color: #f5f5f5;
         }
 
         .container {
             max-width: 600px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 0;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
         }
 
         .header {
@@ -51,16 +43,16 @@
         .dateInfo {
             max-height: 83px;
             width: 80%;
-            font-size: 60px;
-            font-weight: bold;
+            border-radius: 10px;
+            background: #ffffff5f;
+            box-shadow: 0px 0px 5px #a7a7a7;
+            backdrop-filter: blur(6px);
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            align-items: baseline;
-            border-radius: 10px;
-            background: #ffffffaa;
-            box-shadow: 0px 0px 5px #a7a7a7;
-            backdrop-filter: blur(10px);
+            align-items: center;
+            font-size: 60px;
+            font-weight: bold;
         }
 
         .dateInfo span {
@@ -80,8 +72,7 @@
             padding-right: 30px;
         }
 
-        .content p {
-            white-space: pre-wrap;
+        .signin {
             color: #838383;
             margin-top: 0px;
             margin-bottom: 10px;
@@ -127,30 +118,38 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 10px;
-            margin-right: 10px;
+            margin-right: 5px;
         }
 
         .toDo {
             display: flex;
             flex-direction: row;
             margin-top: 18px;
+            align-items: center;
         }
 
         .toDo p {
-            margin-top: -3px;
-            margin-left: 16px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            margin-left: 20px;
             font-size: 20px;
+            font-weight: 500;
             color: #434343;
         }
 
         .toDoBg {
-            border-radius: 1em;
+            border-radius: 50%;
             width: 48px;
             height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .toDoBg span {
             font-size: 32px;
             font-weight: bold;
             color: white;
-            text-align: center;
         }
 
         .credit {
@@ -166,50 +165,50 @@
 <body id="body">
     <div class="container">
 
-        <img style="width: 100%;" src="file:///D:/BaiduNetdiskDownload/%E9%AC%BC%E9%87%9D%E8%8D%89/%E9%AC%BC%E9%87%9D%E8%8D%89%202021-11-24%2000-21.jpeg" alt="Top Image">
+        <img style="width: 100%;" src="file:///D:/koishi/koishi-app/res/1.jpg" alt="Top Image">
 
         <div class="header">
-            <img class="avatar" src="undefined" alt="Avatar">
+            <img class="avatar" src="avatar.png" alt="Avatar">
             <div class="dateInfo">
                 <span class="greeting">晚上好</span>
-                <span style="color: #666666;">11/27</span>
+                <span style="color: #666666;">11/29</span>
             </div>
         </div>
         
         <div class="hitokoto">
-            <p>『我是为了与你相见才诞生于世的。』<br>——&nbsp;渚薰「EVA」</p>
+            <p>『如果可以，愿来生你不要忘记我，我也不要忘记你那熟悉的温柔。』<br>——「狐妖小红娘」</p>
         </div>
 
         <div class="content">
 
-            <p><strong>@wtfalice</strong> 签到成功！🫧+32 🪙+62</p>
+            <div class="signin"><strong>@Grace</strong> 签到成功！🫧+14 🪙+20</div>
 
             <div class="levelInfo">
-                <span style="color: #838383;">荒野漫步者</span>
-                <span style="color: #b4b1b1;">639/1000</span>
+                <span style="color: #838383;">不知名杂鱼</span>
+                <span style="color: #b4b1b1;">14/500</span>
             </div>
 
             <div class="level-bar">
                 <div class="bar-container">
-                    <div class="progress" style="width: calc(63.900%);"></div>
+                    <div class="progress" style="width: calc(2.800%);"></div>
                 </div>
             </div>
 
             <div class="fortune">
-                <span style="font-size: 36px; font-weight: bold;">🍀7</span>
-                <span style="font-size: 28px; color: #838383;">&#9775;吃泡面会没有调味包的程度&#9775;</span>
+                <span style="font-size: 36px; font-weight: bold;">🍀58</span>
+                <span style="font-size: 28px; color: #838383;">🌠玩滑梯能流畅滑到底的程度</span>
             </div>
             
             <hr>
 
             <div class="toDo">
                 <div class="toDoBg" style="background-color: #D4473D;"><span>宜</span></div>
-                <p style="text-shadow: 0px 0px 1px #ffbbbb;">睡懒觉——避免内存不足<br>肝爆——努力使人进步，肝爆让人快乐</p>
+                <p style="text-shadow: 0px 0px 1px #ffbbbb;">看轻小说——插画很好舔，孩子很满意<br>思考人生——自己的幸福呢？</p>
             </div>
 
             <div class="toDo">
                 <div class="toDoBg" style="background-color: #000000;"><span>忌</span></div>
-                <p style="text-shadow: 0px 0px 1px #bcdbff;">穿女装——被父母看到<br>渡劫——没能扛过去，寿元终</p>
+                <p style="text-shadow: 0px 0px 1px #bcdbff;">学习——会睡着<br>上微博——被智障发言糊一脸</p>
             </div>
             
         </div>

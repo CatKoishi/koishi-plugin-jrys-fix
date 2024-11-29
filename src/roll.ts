@@ -39,7 +39,7 @@ export class Jrys {
     return Array.from(randomIndexes).map(index => jsonObject[index]);
   }
 
-  async random(min: number, max: number): Promise<number>  {
+  async random(min: number, max: number, luck: number = 50): Promise<number>  {
     return Math.round(Math.random()*(max-min)+min);
   }
 }

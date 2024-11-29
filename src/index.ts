@@ -12,6 +12,8 @@ import { RollEvent, defaultEventJson } from './event'
 
 export const name = 'jrys-fix'
 
+// Coin Exp relate with luck
+
 export interface Config {
   imgUrl: string
   signExp: number[]
@@ -96,7 +98,8 @@ export function apply(ctx: Context, config: Config) {
       bgUrl = pathToFileURL(path.resolve(__dirname, (config.imgUrl + Random.pick(await getFolderImg(config.imgUrl))))).href
     }
 
-    const avatarUrl = session.platform == 'qq'? `http://q.qlogo.cn/qqapp/${session.bot.config.id}/${session.event.user?.id}/640`:session.author.avatar;
+    let avatarUrl = session.platform == 'qq'? `http://q.qlogo.cn/qqapp/${session.bot.config.id}/${session.event.user?.id}/640`:session.author.avatar;
+    if( avatarUrl == undefined ) { avatarUrl = 'avatar.png' };
     const gooddo = `${gooddo1.name}——${gooddo1.good}<br>${gooddo2.name}——${gooddo2.good}`;
     const baddo = `${baddo1.name}——${baddo1.bad}<br>${baddo2.name}——${baddo2.bad}`;
 
@@ -125,7 +128,7 @@ export function apply(ctx: Context, config: Config) {
 
         <div class="content">
 
-            <p><strong>@${name}</strong> 签到成功！🫧+${sign.getExp} 🪙+${sign.getCoin}</p>
+            <div class="signin"><strong>@${name}</strong> 签到成功！🫧+${sign.getExp} 🪙+${sign.getCoin}</div>
 
             <div class="levelInfo">
                 <span style="color: ${levelinfo.levelInfo.levelColor};">${levelinfo.levelInfo.levelName}</span>
@@ -140,7 +143,7 @@ export function apply(ctx: Context, config: Config) {
 
             <div class="fortune">
                 <span style="font-size: 36px; font-weight: bold;">🍀${luck}</span>
-                <span style="font-size: 28px; color: #838383;">&#9775;${luckInfo}&#9775;</span>
+                <span style="font-size: 28px; color: #838383;">🌠${luckInfo}</span>
             </div>
             
             <hr>

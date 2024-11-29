@@ -81,7 +81,7 @@ export const defaultFortuneInfo = [
   { luck: 50, desc: '玩滑梯能流畅滑到底的程度' },
   { luck: 60, desc: '晚上走森林不会迷路的程度' },
   { luck: 70, desc: '打游戏能够轻松过关的程度' },
-  { luck: 80, desc: '在自习室能找到想要的位置的程度' },
+  { luck: 80, desc: '抽卡能够大成功的程度' },
   { luck: 95, desc: '天选之人' },
 ];
 
