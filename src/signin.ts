@@ -166,7 +166,7 @@ export class Signin {
   getLevelInfo(exp: number, info: LevelInfo[]) {
     let index = 0;
     for (let i = 0; i < info.length; i++) {
-      if( exp>info[i].levelExp ) {index++} else {break};
+      if( exp>=info[i].levelExp ) {index++} else {break};
     }
     let nExp:number | string;
     if(index >= info.length) { nExp = '???' } else { nExp = info[index].levelExp }
@@ -180,7 +180,7 @@ export class Signin {
   getFortuneInfo(luck: number, info: FortuneInfo[]): string {
     let index = 0;
     for (let i = 0; i < info.length; i++) {
-      if( luck>info[i].luck ) {index++} else {break};
+      if( luck>=info[i].luck ) {index++} else {break};
     }; index--;
 
     return info[index].desc;
