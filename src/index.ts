@@ -35,18 +35,18 @@ export const Config: Schema<Config> = Schema.object({
     levelExp: Schema.number().description('等级最低经验'),
     levelName: Schema.string().description('等级名称'),
     levelColor: Schema.string().role('color').description('等级颜色'),
-  })).role('table').default(si.defaultLevelInfo).description('签到经验等级设置，请按升序排列！！！'),
+  })).role('table').default(si.defaultLevelInfo).description('经验等级设置: 升序排列 | 最低等级经验必须为0'),
 
   fortuneSet: Schema.array(Schema.object({
     luck: Schema.number().description('每级最低运势'),
     desc: Schema.string().description('运势描述'),
-  })).role('table').default(si.defaultFortuneInfo).description('运势值描述信息，请按升序排列！！！'),
+  })).role('table').default(si.defaultFortuneInfo).description('运势值描述信息: 升序排列 | 运势取值0~100, 最低一级必须为0 | 描述信息最长14个中文字符'),
 
   event: Schema.array(Schema.object({
-    name: Schema.string(),
-    good: Schema.string(),
-    bad: Schema.string(),
-  })).role('table')
+    name: Schema.string().description('事件名称'),
+    good: Schema.string().description('好的结局'),
+    bad: Schema.string().description('坏的结局'),
+  })).role('table').default([{name:'网购', good:'买到超值好物', bad:'会被坑'}]).description('自定义黄历事件')
 
 })
 

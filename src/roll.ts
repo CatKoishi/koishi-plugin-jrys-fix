@@ -40,6 +40,12 @@ export class Jrys {
   }
 
   async random(min: number, max: number, luck: number = 50): Promise<number>  {
-    return Math.round(Math.random()*(max-min)+min);
+    let mmin = min;
+    let mmax = max;
+    if(max < min) {
+      mmin = max;
+      mmax = min;
+    }
+    return Math.round(Math.random()*(mmax-mmin)+mmin);
   }
 }
