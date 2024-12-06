@@ -113,12 +113,12 @@ export class Signin {
   //             0:签到成功, 1:已签到
   // { "status": 1, "getpoint": signpoint, "signTime": signTime, "allpoint": signpoint, "count": 1 };
   // 参数：session， 返回：json
-  async callSignin(uid:number, pid: string, username:string) {
+  async callSignin(uid:number, pid: string, username:string, luck:number) {
     const date = new Date();
     const roll = new Jrys();
 
-    const exp = await roll.random(this.cfg.signExp[0], this.cfg.signExp[1]);
-    const coin = await roll.random(this.cfg.signCoin[0], this.cfg.signCoin[1]);
+    const exp = await roll.random(this.cfg.signExp[0], this.cfg.signExp[1], luck);
+    const coin = await roll.random(this.cfg.signCoin[0], this.cfg.signCoin[1], luck);
 
     const userData = await this.ctx.database.get('jrys', {id: uid});
     

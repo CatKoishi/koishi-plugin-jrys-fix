@@ -40,12 +40,39 @@ export class Jrys {
   }
 
   async random(min: number, max: number, luck: number = 50): Promise<number>  {
-    let mmin = min;
-    let mmax = max;
+    let rmin = min;
+    let rmax = max;
     if(max < min) {
-      mmin = max;
-      mmax = min;
+      rmin = max;
+      rmax = min;
     }
-    return Math.round(Math.random()*(mmax-mmin)+mmin);
+
+    const mean = luck/100;
+    const std = 0.12;
+
+    // Generate Guass number through Box-Muller methord
+    let a:number, b:number;
+    do {
+      a = Math.random();
+      b = Math.random();
+    } while(a==0.0 || b==0.0)
+    let rand = Math.cos(2*Math.PI*a)*Math.sqrt(-2*Math.log(b));
+    rand = rand*std+mean;
+
+    // Fold
+    if(rand > 1) {
+      rand = 2-rand;
+    } else if(rand < 0) {
+      rand = -rand;
+    }
+
+    // Keep in range
+    if(rand > 1) {
+      rand = 1
+    } else if(rand < 0) {
+      rand = 0;
+    }
+
+    return Math.round(rand*(rmax-rmin)+rmin);
   }
 }

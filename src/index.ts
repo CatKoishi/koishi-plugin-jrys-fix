@@ -78,12 +78,12 @@ export function apply(ctx: Context, config: Config) {
     if (!name) { name = session.author.name }
     name = name.length>12? name.substring(0,11)+'...':name;
 
-    const sign = await signin.callSignin(session.user.id, session.userId, name)
+    const luck = await jrys.getFortune(session.user.id); //运势值
+    const sign = await signin.callSignin(session.user.id, session.userId, name, luck)
     if( sign.status === 1 ) { return '今天已经签到过了哦~' }
 
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 确保月份为两位数
     const day = date.getDate().toString().padStart(2, '0'); // 确保日期为两位数
-    const luck = await jrys.getFortune(session.user.id); //运势值
     const luckInfo = signin.getFortuneInfo(luck, config.fortuneSet); // 运势描述
     const [gooddo1, gooddo2, baddo1, baddo2] = await jrys.getRandomObjects(eventJson, session.user.id); // 4*宜/不宜
     const hitokoto = await fetchHitokoto(); // 一言
