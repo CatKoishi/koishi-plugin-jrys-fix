@@ -6,7 +6,6 @@ import { } from 'koishi-plugin-monetary'
 declare module 'koishi' {
   interface Tables {
     jrys: _UserFortune;
-    jrys_max: any;
   }
 }
 
@@ -93,11 +92,6 @@ export const initDatabase = (ctx: Context) => {
     exp: "unsigned",
     signCount: "unsigned"
   })
-  ctx.model.extend("jrys_max", {
-    id: "string",
-    point: "unsigned",
-    count: "unsigned"
-  })
 }
 
 
@@ -113,7 +107,7 @@ export class Signin {
   //             0:签到成功, 1:已签到
   // { "status": 1, "getpoint": signpoint, "signTime": signTime, "allpoint": signpoint, "count": 1 };
   // 参数：session， 返回：json
-  async callSignin(uid:number, pid: string, username:string, luck:number) {
+  async callSignin(uid:number, userid:string, luck:number) {
     const date = new Date();
     const roll = new Jrys();
 
@@ -122,21 +116,13 @@ export class Signin {
 
     const userData = await this.ctx.database.get('jrys', {id: uid});
     
-    if( userData.length === 0) { // No UserData -> Create new one & Move Data from old database
-      let accCount = 0;
-      let accExp = 0;
-      const oldData = await this.ctx.database.get('jrys_max', { id: pid });
-      if(oldData.length === 0) {
-        accCount = 1;
-        accExp = exp;
-      } else {
-        accCount = oldData[0].count + 1;
-        accExp = oldData[0].point + exp;
-      }
+    if( userData.length === 0) { // No UserData -> Create new one
+      let accCount = 1;
+      let accExp = exp;
       
       this.ctx.database.create('jrys', {
         id:uid,
-        name:username,
+        name:userid,
         time: date,
         exp: accExp,
         signCount: accCount
@@ -152,7 +138,7 @@ export class Signin {
       let accExp = userData[0].exp + exp;
       let accCount = userData[0].signCount+1;
       this.ctx.database.set('jrys', {id: uid}, {
-        name: username,
+        name: userid,
         time: date,
         exp: accExp,
         signCount: accCount

@@ -12,7 +12,9 @@ import { RollEvent, defaultEventJson } from './event'
 
 export const name = 'jrys-fix'
 
-// Coin Exp relate with luck
+// 支援QQ官方Bot
+// Rank!!!
+// 总结
 
 export interface Config {
   imgUrl: string
@@ -68,18 +70,46 @@ export function apply(ctx: Context, config: Config) {
   defaultEventJson.forEach(item => { eventJson.push(item) })
   config.event.forEach(item => { eventJson.push(item) })
 
+  ctx.command("jrysmigrate <qqname:string>")
+  .userFields(['id', 'name'])
+  .action(async ({session}, qqname) => {
+    const oldData = await ctx.database.get('jrys', {name: qqname});
+    if( oldData.length === 0 ) {
+      return '用户未找到，请检查用户名是否正确输入'
+    }
+
+    const nowData = await ctx.database.get('jrys', {id: session.user.id});
+    if( nowData.length === 0 ) { // create new record
+      await ctx.database.create('jrys', {
+        id: session.user.id,
+        name: session.author.id,
+        time: oldData[0].time,
+        exp: oldData[0].exp,
+        signCount: oldData[0].signCount
+      });
+    } else { // add to exits record
+      await ctx.database.set('jrys', {id: session.user.id}, {
+        name: session.author.id,
+        exp: nowData[0].exp + oldData[0].exp,
+        signCount: nowData[0].signCount + oldData[0].signCount
+      })
+    }
+    return '已成功迁移数据'
+  })
+
   ctx.command("jrys", "今日运势")
   .userFields(['id', 'name'])
   .action(async ({session}) => {
     const date = new Date();
-    
-    let name: string;
-    if (ctx.database) { name = session.username }
-    if (!name) { name = session.author.name }
-    name = name.length>12? name.substring(0,11)+'...':name;
+
+    let name: string = '';
+    if ( session.user.name ) {
+      name = `@${session.user.name}`;
+    }
+    name = name.length>13? name.substring(0,12)+'...':name;
 
     const luck = await jrys.getFortune(session.user.id); //运势值
-    const sign = await signin.callSignin(session.user.id, session.userId, name, luck)
+    const sign = await signin.callSignin(session.user.id, session.author.id, luck)
     if( sign.status === 1 ) { return '今天已经签到过了哦~' }
 
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 确保月份为两位数
@@ -98,7 +128,7 @@ export function apply(ctx: Context, config: Config) {
       bgUrl = pathToFileURL(path.resolve(__dirname, (config.imgUrl + Random.pick(await getFolderImg(config.imgUrl))))).href
     }
 
-    let avatarUrl = session.platform == 'qq'? `http://q.qlogo.cn/qqapp/${session.bot.config.id}/${session.event.user?.id}/640`:session.author.avatar;
+    let avatarUrl = session.author.avatar;
     if( avatarUrl == undefined ) { avatarUrl = 'avatar.png' };
     const gooddo = `${gooddo1.name}——${gooddo1.good}<br>${gooddo2.name}——${gooddo2.good}`;
     const baddo = `${baddo1.name}——${baddo1.bad}<br>${baddo2.name}——${baddo2.bad}`;
@@ -128,7 +158,7 @@ export function apply(ctx: Context, config: Config) {
 
         <div class="content">
 
-            <div class="signin"><strong>@${name}</strong> 签到成功！🫧+${sign.getExp} 🪙+${sign.getCoin}</div>
+            <div class="signin"><strong>${name}</strong> 签到成功！🫧+${sign.getExp} 🪙+${sign.getCoin}</div>
 
             <div class="levelInfo">
                 <span style="color: ${levelinfo.levelInfo.levelColor};">${levelinfo.levelInfo.levelName}</span>
