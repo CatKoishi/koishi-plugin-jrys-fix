@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-jrys-fix",
   "description": "nice signin plugin",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -11,7 +11,7 @@
   "koishi": {
     "description": {
       "en": "jrys-supper-ultra-ti-max-fix",
-      "zh": "修改自jrys-max，对接monetary插件，支持更多自定义内容以及美观的运势图片"
+      "zh": "修改自jrys-max，对接monetary插件，支持更多自定义内容以及美观的运势图片，点击此文本查看预览图"
     },
     "service": {
       "required": [

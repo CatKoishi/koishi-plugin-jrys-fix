@@ -70,32 +70,32 @@ export function apply(ctx: Context, config: Config) {
   defaultEventJson.forEach(item => { eventJson.push(item) })
   config.event.forEach(item => { eventJson.push(item) })
 
-  ctx.command("jrysmigrate <qqname:string>")
-  .userFields(['id', 'name'])
-  .action(async ({session}, qqname) => {
-    const oldData = await ctx.database.get('jrys', {name: qqname});
-    if( oldData.length === 0 ) {
-      return '用户未找到，请检查用户名是否正确输入'
-    }
+  // ctx.command("jrysmigrate <qqname:string>")
+  // .userFields(['id', 'name'])
+  // .action(async ({session}, qqname) => {
+  //   const oldData = await ctx.database.get('jrys', {name: qqname});
+  //   if( oldData.length === 0 ) {
+  //     return '用户未找到，请检查用户名是否正确输入'
+  //   }
 
-    const nowData = await ctx.database.get('jrys', {id: session.user.id});
-    if( nowData.length === 0 ) { // create new record
-      await ctx.database.create('jrys', {
-        id: session.user.id,
-        name: session.author.id,
-        time: oldData[0].time,
-        exp: oldData[0].exp,
-        signCount: oldData[0].signCount
-      });
-    } else { // add to exits record
-      await ctx.database.set('jrys', {id: session.user.id}, {
-        name: session.author.id,
-        exp: nowData[0].exp + oldData[0].exp,
-        signCount: nowData[0].signCount + oldData[0].signCount
-      })
-    }
-    return '已成功迁移数据'
-  })
+  //   const nowData = await ctx.database.get('jrys', {id: session.user.id});
+  //   if( nowData.length === 0 ) { // create new record
+  //     await ctx.database.create('jrys', {
+  //       id: session.user.id,
+  //       name: session.author.id,
+  //       time: oldData[0].time,
+  //       exp: oldData[0].exp,
+  //       signCount: oldData[0].signCount
+  //     });
+  //   } else { // add to exits record
+  //     await ctx.database.set('jrys', {id: session.user.id}, {
+  //       name: session.author.id,
+  //       exp: nowData[0].exp + oldData[0].exp,
+  //       signCount: nowData[0].signCount + oldData[0].signCount
+  //     })
+  //   }
+  //   return '已成功迁移数据'
+  // })
 
   ctx.command("jrys", "今日运势")
   .userFields(['id', 'name'])
@@ -230,7 +230,7 @@ export function apply(ctx: Context, config: Config) {
 async function getFolderImg(folder:string) {
   let imgfilename = await readFilenames(folder);
   const filteredArr = imgfilename.filter((filename) => {
-    return /\.(png|jpg|jpeg|ico|svg)$/i.test(filename);
+    return /\.(png|jpg|jpeg|ico|svg|webp)$/i.test(filename);
   });
   return filteredArr;
 }
