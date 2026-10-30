@@ -84,13 +84,18 @@ export function apply(ctx: Context, config: Config) {
   } else {
     bgUrl = readFolderImg(config.imgUrl)
   }
+  // 本地文件夹路径在每次调用时重新扫描，便于随时增删图片而无需重载插件
+  const refreshBgUrl = () => {
+    if (!config.imgUrl.match(/http(s)?:\/\/(.*)/gi)) bgUrl = readFolderImg(config.imgUrl)
+  }
 
   ctx.command("jrys", "今日运势")
     .userFields(['id', 'name'])
     .action(async ({ session }) => {
       const user = session?.user;
       const authorId = session?.author?.id;
-      if (!user || !user.id || !authorId) {
+      // 用户 id 可能为 0（如 admin 账号），不能用 !user.id 判断
+      if (!user || user.id == null || !authorId) {
         return '会话信息错误，无法签到';
       }
 
@@ -146,6 +151,7 @@ export function apply(ctx: Context, config: Config) {
       } else if (config.posterType === 'picture') {
 
         // 获取头图地址
+        refreshBgUrl();
         let headerUri: string;
         if ( typeof bgUrl === 'string' ) { headerUri = bgUrl; }
         else { headerUri = Random.pick(bgUrl); }
@@ -223,6 +229,10 @@ export function apply(ctx: Context, config: Config) {
           await page.setViewport({ width: 600, height: 1080 * 2 });
           await page.goto(`file:///${path.resolve(__dirname, "./index/index.html")}`);
           await page.waitForSelector("#body");
+          // 等待所有图片加载完成再截图，避免远程背景图未加载导致裂图
+          await page.evaluate(() => Promise.all(Array.from(document.images).map(img =>
+            img.complete ? Promise.resolve() : new Promise(res => { img.onload = img.onerror = res })
+          )));
           const element = await page.$("#body");
           let msg;
           if (element) {
